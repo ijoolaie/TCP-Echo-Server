@@ -56,9 +56,8 @@ public sealed class EchoServerEdgeCaseTests
             using (var emptyClient = new TcpClient())
             {
                 await emptyClient.ConnectAsync(endpoint.Address, endpoint.Port);
-                emptyClient.Client.Shutdown(SocketShutdown.Send);
-
                 var stream = emptyClient.GetStream();
+                emptyClient.Client.Shutdown(SocketShutdown.Send);
                 var buffer = new byte[1];
                 var bytesRead = await stream.ReadAsync(buffer).AsTask().WaitAsync(TimeSpan.FromSeconds(5));
 
