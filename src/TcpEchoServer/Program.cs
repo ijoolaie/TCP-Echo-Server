@@ -1,33 +1,23 @@
-using System.Net;
 using Microsoft.Extensions.Logging;
 using TcpEchoServer;
 
-var host = args.Length > 0 ? args[0] : "127.0.0.1";
-var port = args.Length > 1 && int.TryParse(args[1], out var parsedPort) ? parsedPort : 5000;
-var maxClients = args.Length > 2 && int.TryParse(args[2], out var parsedMaxClients) ? parsedMaxClients : 100;
-
-if (!IPAddress.TryParse(host, out var address))
+ServerOptions options;
+try
 {
-    Console.Error.WriteLine($"Invalid IP address: {host}");
+    options = ServerOptions.Parse(args);
+}
+catch (ArgumentException exception)
+{
+    Console.Error.WriteLine(exception.Message);
+    Console.Error.WriteLine("Usage: TcpEchoServer [bind-ip] [port] [max-concurrent-clients]");
+    Console.Error.WriteLine("Environment: TCP_ECHO_HOST, TCP_ECHO_PORT, TCP_ECHO_MAX_CLIENTS");
     return 2;
 }
 
-if (port is < IPEndPoint.MinPort or > IPEndPoint.MaxPort)
+using var loggerFactory = LoggerFactory.Create(builder => builder.AddSimpleConsole(logging =>
 {
-    Console.Error.WriteLine($"Invalid TCP port: {port}");
-    return 2;
-}
-
-if (maxClients < 1)
-{
-    Console.Error.WriteLine("Maximum concurrent clients must be at least 1.");
-    return 2;
-}
-
-using var loggerFactory = LoggerFactory.Create(builder => builder.AddSimpleConsole(options =>
-{
-    options.SingleLine = true;
-    options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+    logging.SingleLine = true;
+    logging.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
 }));
 var logger = loggerFactory.CreateLogger<EchoServer>();
 
@@ -38,7 +28,7 @@ Console.CancelKeyPress += (_, eventArgs) =>
     shutdown.Cancel();
 };
 
-var server = new EchoServer(address, port, maxClients, logger);
+var server = new EchoServer(options.BindAddress, options.Port, options.MaxConcurrentClients, logger);
 try
 {
     await server.RunAsync(shutdown.Token);
