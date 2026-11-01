@@ -1,11 +1,10 @@
 # Roadmap
 
-This roadmap distinguishes committed implementation from verified behavior. A feature is not considered verified until the relevant build/tests pass.
+A checked item means implementation or test coverage is committed. Passing build/test/CI is tracked separately and must not be inferred from source files.
 
 ## Phase 0 — Repository foundations
 - [x] Confirm repository access and default branch.
-- [x] Replace placeholder README with project overview and commands.
-- [x] Add handoff and roadmap documents.
+- [x] Add README, handoff, and roadmap.
 - [x] Add .gitignore and .NET solution/project structure.
 
 ## Phase 1 — Minimal TCP echo server
@@ -13,29 +12,30 @@ This roadmap distinguishes committed implementation from verified behavior. A fe
 - [x] Implement asynchronous accept loop.
 - [x] Echo arbitrary byte chunks without decoding or framing.
 - [x] Handle EOF and dispose client resources.
-- [x] Author loopback integration tests for binary echo.
-
-Verification pending: run restore, build, and tests with the .NET 10 SDK.
+- [x] Add loopback tests for binary echo and concurrent clients.
+- [ ] Execute restore, build, and tests with .NET 10; resolve any failures.
 
 ## Phase 2 — Concurrency and lifecycle
 - [x] Support multiple simultaneous clients.
-- [x] Isolate client-specific I/O exceptions.
-- [x] Add cancellation-aware server shutdown.
-- [ ] Enforce and test maximum concurrent connections.
-- [x] Author integration coverage for two simultaneous clients.
-- [ ] Verify shutdown behavior and client disconnect handling in tests.
+- [x] Isolate client-specific I/O failures.
+- [x] Add cancellation-aware shutdown.
+- [x] Enforce maximum concurrent clients with a semaphore.
+- [x] Add structured lifecycle logs without payload contents.
+- [x] Add integration coverage for two clients, max-client backpressure, large fragmented writes, disconnect resilience, and shutdown.
+- [ ] Execute tests and verify lifecycle behavior in CI.
 
 ## Phase 3 — Configuration and observability
-- [x] Configure bind IP address and port through command-line arguments.
-- [ ] Configure maximum connections.
-- [ ] Add structured lifecycle logging.
-- [x] Use loopback as the safe local default.
+- [x] Configure bind IP, port, and maximum concurrent clients through command-line arguments.
+- [x] Structured console logging for server/client lifecycle.
+- [x] Safe loopback default.
+- [ ] Consider environment/config-file support if required.
 
 ## Phase 4 — Quality and protocol correctness
 - [x] Author binary payload preservation test.
-- [ ] Test large payloads and fragmented/coalesced writes.
-- [ ] Test empty payloads and EOF behavior.
-- [ ] Review cancellation and resource ownership.
+- [x] Author large payload / fragmented write test.
+- [x] Author disconnect and shutdown test coverage.
+- [ ] Add additional coalesced-write and empty-stream cases if useful.
+- [ ] Review cancellation and resource ownership after test execution.
 - [ ] Run tests on supported operating systems.
 
 ## Phase 5 — CI and release
@@ -43,7 +43,7 @@ Verification pending: run restore, build, and tests with the .NET 10 SDK.
 - [x] Document build, run, and test commands.
 - [ ] Confirm CI passes on GitHub.
 - [ ] Complete security and operational review.
-- [ ] Publish release notes and create a v1.0.0 tag only after acceptance criteria pass.
+- [ ] Publish release notes and tag v1.0.0 only after all acceptance criteria pass.
 
 ## Phase 6 — Optional future work
 Consider TLS, container packaging, metrics, health endpoints, or protocol extensions only after v1.0 and with explicit scope approval.
