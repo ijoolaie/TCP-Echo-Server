@@ -37,7 +37,8 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Execute build/tests and fix any failures.
 - Confirm GitHub Actions passes.
 - Run tests on supported operating systems.
-- Complete runtime security and operational review.
+- Source-level security review completed; corrected a malformed test-project path in `tcp-echo-server.sln`.
+- Complete runtime security and operational review after build/test execution.
 - Do not publish a v1.0 tag until verification is green.
 
 ## Safety constraints
