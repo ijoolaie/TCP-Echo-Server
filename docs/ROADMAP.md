@@ -44,6 +44,7 @@ A checked item means implementation or test coverage is committed. Passing build
 
 ## Phase 5 — CI and release
 - [x] Add GitHub Actions workflow for .NET 10 restore, build, and test.
+- [x] Configure CI matrix for Ubuntu, Windows, and macOS.
 - [x] Document build, run, and test commands.
 - [ ] Confirm CI passes on GitHub.
 - [ ] Complete security and operational review.
