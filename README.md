@@ -1,16 +1,17 @@
 # TCP Echo Server
 
-An asynchronous TCP echo server built with C# and .NET 10. It accepts concurrent clients and writes each client's received bytes back to that same client without changing their contents.
+An asynchronous TCP echo server built with **C# and .NET 10**. It accepts concurrent clients and writes each client's received bytes back to that same client without changing their contents.
 
-> Status: Initial implementation and integration tests are committed. Local build/test verification is still pending; this is not a v1.0 release.
+> **Status:** Phase 1 and Phase 2 implementation and integration-test coverage are committed. Build/test execution and CI confirmation remain pending.
 
 ## Features
 - Asynchronous TCP accept and read/write operations.
-- Multiple concurrent client sessions.
-- Byte-preserving echo, including binary payloads.
+- Multiple concurrent client sessions, bounded by a configurable connection limit.
+- Byte-preserving echo for binary and arbitrary stream chunks.
 - Client-local handling of disconnect and I/O failures.
 - Cancellation-aware server shutdown.
-- Loopback integration tests for binary payloads and concurrent clients.
+- Structured console logging for server and client lifecycle events (payloads are never logged).
+- Integration tests for binary payloads, simultaneous clients, large fragmented writes, connection limits, disconnects, and shutdown.
 - GitHub Actions workflow for .NET 10 restore, build, and test.
 
 ## TCP stream semantics
@@ -25,27 +26,23 @@ TCP is a byte stream, not a message protocol. A read operation is not guaranteed
     dotnet test tcp-echo-server.sln --configuration Release
 
 ## Run locally
-The server binds to loopback (127.0.0.1) on port 5000 by default:
-
+The defaults bind to loopback (127.0.0.1), port 5000, with at most 100 concurrent clients:
     dotnet run --project src/TcpEchoServer
 
-Optional positional arguments override the bind IP address and port:
+Arguments are positional: bind IP, port, maximum concurrent clients.
+    dotnet run --project src/TcpEchoServer -- 127.0.0.1 7000 32
 
-    dotnet run --project src/TcpEchoServer -- 127.0.0.1 7000
-
-Press Ctrl+C to request shutdown. The default loopback binding is intentional; do not expose the server publicly without an explicit security and deployment review.
+Press Ctrl+C for graceful shutdown. The loopback default is intentional; do not expose the server publicly without explicit security and deployment review.
 
 ## Repository layout
-- src/TcpEchoServer/
-- tests/TcpEchoServer.Tests/
+- src/TcpEchoServer/ — server implementation
+- tests/TcpEchoServer.Tests/ — xUnit loopback integration tests
 - docs/HANDOFF.md and docs/ROADMAP.md
-- .github/workflows/dotnet.yml
+- .github/workflows/dotnet.yml — CI pipeline
 - tcp-echo-server.sln
 
 ## Scope
-Version 1.0 aims to include reliable concurrent echo, graceful lifecycle management, configurable bind host/port and connection limits, structured logging, automated tests, CI, and complete documentation.
-
-TLS, authentication, custom message framing, metrics exporters, container deployment, and public hosting are out of scope unless separately approved.
+Version 1.0 focuses on reliable concurrent echo, lifecycle management, connection limits, configuration, structured logging, automated tests, CI, and documentation. TLS, authentication, custom message framing, metrics exporters, container deployment, and public hosting remain out of scope unless separately approved.
 
 ## Project documents
 - [Handoff and engineering decisions](docs/HANDOFF.md)
