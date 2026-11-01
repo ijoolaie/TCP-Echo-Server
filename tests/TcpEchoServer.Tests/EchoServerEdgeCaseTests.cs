@@ -47,7 +47,7 @@ public sealed class EchoServerEdgeCaseTests
     public async Task EmptyClientStreamClosesCleanlyAndServerContinuesServing()
     {
         using var shutdown = new CancellationTokenSource();
-        var server = new EchoServer(IPAddress.Loopback, 0);
+        var server = new EchoServer(IPAddress.Loopback, 0, maxConcurrentClients: 1);
         var serverTask = server.RunAsync(shutdown.Token);
         var endpoint = Assert.IsType<IPEndPoint>(server.LocalEndpoint);
 
