@@ -36,9 +36,10 @@ A checked item means implementation or test coverage is committed. Passing build
 ## Phase 4 — Quality and protocol correctness
 - [x] Author binary payload preservation test.
 - [x] Author large payload / fragmented write test.
-- [x] Author disconnect and shutdown test coverage.
-- [ ] Add additional coalesced-write and empty-stream cases if useful.
-- [ ] Review cancellation and resource ownership after test execution.
+- [x] Author coalesced-write test confirming byte-stream semantics and no framing assumptions.
+- [x] Author empty client-stream (half-close) test and verify subsequent clients are served.
+- [x] Review cancellation flow and client resource ownership; ensure every acquired connection slot is released in the client-session finally block.
+- [ ] Execute all tests and inspect runtime behavior.
 - [ ] Run tests on supported operating systems.
 
 ## Phase 5 — CI and release
