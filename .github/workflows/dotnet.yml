@@ -39,4 +39,4 @@ jobs:
         run: dotnet build tcp-echo-server.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test tcp-echo-server.sln --configuration Release --no-build
+        run: dotnet test tcp-echo-server.sln --configuration Release --no-build --logger "console;verbosity=detailed"
