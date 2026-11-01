@@ -21,6 +21,8 @@ public sealed class EchoServer
         _listener = new TcpListener(address, port);
     }
 
+    public IPEndPoint? LocalEndpoint => _listener.LocalEndpoint as IPEndPoint;
+
     public async Task RunAsync(CancellationToken cancellationToken = default)
     {
         var clients = new ConcurrentDictionary<int, Task>();
