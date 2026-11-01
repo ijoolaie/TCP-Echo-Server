@@ -24,7 +24,7 @@ public sealed class EchoServerIntegrationTests
 
             await stream.WriteAsync(payload);
             var echoed = new byte[payload.Length];
-            await stream.ReadExactlyAsync(echoed);
+            await stream.ReadExactlyAsync(echoed).AsTask().WaitAsync(TimeSpan.FromSeconds(5));
 
             Assert.Equal(payload, echoed);
         }
@@ -64,7 +64,8 @@ public sealed class EchoServerIntegrationTests
             var secondEcho = new byte[secondPayload.Length];
             await Task.WhenAll(
                 firstStream.ReadExactlyAsync(firstEcho).AsTask(),
-                secondStream.ReadExactlyAsync(secondEcho).AsTask());
+                secondStream.ReadExactlyAsync(secondEcho).AsTask())
+                .WaitAsync(TimeSpan.FromSeconds(5));
 
             Assert.Equal(firstPayload, firstEcho);
             Assert.Equal(secondPayload, secondEcho);
