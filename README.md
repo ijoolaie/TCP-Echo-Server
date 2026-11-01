@@ -1,67 +1,52 @@
 # TCP Echo Server
 
-A small, asynchronous TCP echo server built with **C# and .NET 10**. It accepts multiple concurrent clients and writes each client's received bytes back to that same client without changing their contents.
+An asynchronous TCP echo server built with C# and .NET 10. It accepts concurrent clients and writes each client's received bytes back to that same client without changing their contents.
 
-> **Project status:** Early development. The repository currently contains project planning and initial scaffolding; features are marked complete only after implementation and verification.
+> Status: Initial implementation and integration tests are committed. Local build/test verification is still pending; this is not a v1.0 release.
 
-## Goals
+## Features
+- Asynchronous TCP accept and read/write operations.
+- Multiple concurrent client sessions.
+- Byte-preserving echo, including binary payloads.
+- Client-local handling of disconnect and I/O failures.
+- Cancellation-aware server shutdown.
+- Loopback integration tests for binary payloads and concurrent clients.
+- GitHub Actions workflow for .NET 10 restore, build, and test.
 
-- Handle multiple TCP clients concurrently.
-- Preserve the exact byte sequence received from each client.
-- Isolate client disconnects and client-specific failures.
-- Support cancellation and graceful server shutdown.
-- Configure bind host, port, and maximum concurrent connections.
-- Provide structured logging and automated unit/integration tests.
-- Run build and test checks in GitHub Actions.
-
-## Protocol notes
-
-TCP is a byte stream, not a message protocol. A read operation is not guaranteed to correspond to one application message or one client write. The echo implementation therefore treats input as arbitrary byte chunks and echoes those bytes unchanged. It does not assume UTF-8, newline framing, or message boundaries.
+## TCP stream semantics
+TCP is a byte stream, not a message protocol. A read operation is not guaranteed to correspond to one application message or one client write. The server echoes arbitrary byte chunks unchanged. It does not assume UTF-8, newline framing, or message boundaries.
 
 ## Requirements
-
 - .NET 10 SDK
 
-## Getting started
+## Build and test
+    dotnet restore tcp-echo-server.sln
+    dotnet build tcp-echo-server.sln --configuration Release
+    dotnet test tcp-echo-server.sln --configuration Release
 
-The runnable server and test projects are being added incrementally. Once the initial implementation is in place, the intended commands will be:
+## Run locally
+The server binds to loopback (127.0.0.1) on port 5000 by default:
 
-```bash
-dotnet restore
-dotnet build --configuration Release
-dotnet test --configuration Release
-dotnet run --project src/TcpEchoServer
-```
+    dotnet run --project src/TcpEchoServer
 
-## Planned repository layout
+Optional positional arguments override the bind IP address and port:
 
-```text
-.
-├── src/
-│   └── TcpEchoServer/
-├── tests/
-│   └── TcpEchoServer.Tests/
-├── docs/
-│   ├── HANDOFF.md
-│   └── ROADMAP.md
-├── .github/
-│   └── workflows/
-└── README.md
-```
+    dotnet run --project src/TcpEchoServer -- 127.0.0.1 7000
 
-## Development principles
+Press Ctrl+C to request shutdown. The default loopback binding is intentional; do not expose the server publicly without an explicit security and deployment review.
 
-- Keep the echo path byte-preserving and independent of text encodings.
-- Use asynchronous socket/network APIs; avoid blocking per-client work.
-- Make cancellation, resource ownership, and exception handling explicit.
-- Prefer small, reviewable changes with tests.
-- Do not expose the server publicly or deploy it without an explicit decision.
+## Repository layout
+- src/TcpEchoServer/
+- tests/TcpEchoServer.Tests/
+- docs/HANDOFF.md and docs/ROADMAP.md
+- .github/workflows/dotnet.yml
+- tcp-echo-server.sln
 
-## Scope boundaries
+## Scope
+Version 1.0 aims to include reliable concurrent echo, graceful lifecycle management, configurable bind host/port and connection limits, structured logging, automated tests, CI, and complete documentation.
 
-Version 1.0 focuses on a reliable TCP echo service, lifecycle management, configuration, logging, tests, CI, and documentation. TLS, authentication, a custom message protocol, metrics exporters, container deployment, and public hosting are out of scope unless separately approved.
+TLS, authentication, custom message framing, metrics exporters, container deployment, and public hosting are out of scope unless separately approved.
 
 ## Project documents
-
 - [Handoff and engineering decisions](docs/HANDOFF.md)
 - [Roadmap](docs/ROADMAP.md)
