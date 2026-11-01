@@ -82,4 +82,41 @@ public sealed class EchoServerEdgeCaseTests
             await serverTask.WaitAsync(TimeSpan.FromSeconds(5));
         }
     }
+
+    [Fact]
+    public async Task ShutdownCompletesWhenClientCapacityIsSaturated()
+    {
+        using var shutdown = new CancellationTokenSource();
+        var server = new EchoServer(IPAddress.Loopback, 0, maxConcurrentClients: 1);
+        var serverTask = server.RunAsync(shutdown.Token);
+        var endpoint = Assert.IsType<IPEndPoint>(server.LocalEndpoint);
+
+        try
+        {
+            using var activeClient = new TcpClient();
+            using var waitingClient = new TcpClient();
+
+            await activeClient.ConnectAsync(endpoint.Address, endpoint.Port);
+            var activeStream = activeClient.GetStream();
+            byte[] payload = [0xA5];
+            await activeStream.WriteAsync(payload);
+            var echoed = new byte[payload.Length];
+            await activeStream.ReadExactlyAsync(echoed).AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+            Assert.Equal(payload, echoed);
+
+            // The first session remains open, so the second connection cannot obtain a slot.
+            await waitingClient.ConnectAsync(endpoint.Address, endpoint.Port);
+
+            await shutdown.CancelAsync();
+            await serverTask.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert.True(serverTask.IsCompleted);
+        }
+        finally
+        {
+            if (!shutdown.IsCancellationRequested)
+                await shutdown.CancelAsync();
+
+            await serverTask.WaitAsync(TimeSpan.FromSeconds(5));
+        }
+    }
 }
