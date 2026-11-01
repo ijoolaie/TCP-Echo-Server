@@ -128,14 +128,14 @@ public sealed class EchoServerIntegrationTests
             var secondStream = second.GetStream();
             var payload = System.Text.Encoding.UTF8.GetBytes("wait-for-slot");
             await secondStream.WriteAsync(payload);
-            var readTask = secondStream.ReadExactlyAsync(new byte[payload.Length]).AsTask();
+            var echoed = new byte[payload.Length];
+            var readTask = secondStream.ReadExactlyAsync(echoed).AsTask();
 
             await Task.Delay(200);
             Assert.False(readTask.IsCompleted);
 
             first.Dispose();
-            var echoed = new byte[payload.Length];
-            await secondStream.ReadExactlyAsync(echoed).AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+            await readTask.WaitAsync(TimeSpan.FromSeconds(5));
             Assert.Equal(payload, echoed);
         }
         finally
