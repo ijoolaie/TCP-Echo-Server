@@ -2,7 +2,7 @@
 
 An asynchronous TCP echo server built with **C# and .NET 10**. It accepts concurrent clients and writes each client's received bytes back to that same client without changing their contents.
 
-> **Status:** Phase 1, 2, and 3 implementation and automated test coverage are committed. Build/test execution and CI confirmation remain pending.
+> **Status:** Phase 1–4 implementation and automated test coverage are committed. Build/test execution and CI confirmation remain pending.
 
 ## Features
 - Asynchronous TCP accept and read/write operations.
@@ -13,7 +13,7 @@ An asynchronous TCP echo server built with **C# and .NET 10**. It accepts concur
 - Structured console logging for server and client lifecycle events (payloads are never logged).
 - Configuration through command-line arguments or environment variables, with validated values.
 - Integration tests for binary payloads, simultaneous clients, large fragmented writes, connection limits, disconnects, shutdown, and configuration.
-- GitHub Actions workflow for .NET 10 restore, build, and test.
+- GitHub Actions workflow for .NET 10 restore, build, and test on Ubuntu, Windows, and macOS.
 
 ## TCP stream semantics
 TCP is a byte stream, not a message protocol. A read operation is not guaranteed to correspond to one application message or one client write. The server echoes arbitrary byte chunks unchanged. It does not assume UTF-8, newline framing, or message boundaries.
