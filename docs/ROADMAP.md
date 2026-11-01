@@ -47,7 +47,8 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Configure CI matrix for Ubuntu, Windows, and macOS.
 - [x] Document build, run, and test commands.
 - [ ] Confirm CI passes on GitHub.
-- [ ] Complete security and operational review.
+- [x] Complete source-level security review; correct the test project path separators in the solution file.
+- [ ] Complete runtime security and operational review after build/test execution.
 - [ ] Publish release notes and tag v1.0.0 only after all acceptance criteria pass.
 
 ## Phase 6 — Optional future work
