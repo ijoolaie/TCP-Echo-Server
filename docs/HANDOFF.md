@@ -6,20 +6,24 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 ## Current status
 - Phase 1 (minimal server) implementation committed.
 - Phase 2 (concurrency, bounded sessions, shutdown, and logging) implementation committed.
-- .NET 10 solution and xUnit integration tests committed.
-- GitHub Actions workflow committed for restore/build/test.
+- Phase 3 (validated CLI/environment configuration and precedence) implementation committed.
+- .NET 10 solution, xUnit tests, and GitHub Actions workflow committed.
 - **Verification is pending:** no successful local .NET build or test is claimed. The current execution environment does not have the .NET SDK installed. CI must be checked after the latest commits.
 
 ## Implemented behavior
 - Asynchronous TCP accept loop and per-client echo tasks.
 - Exact byte-preserving echo; no text decoding or application message framing.
 - Concurrent sessions bounded by a configurable semaphore (default 100).
-- Client-local I/O failures are logged at Debug and do not intentionally terminate other sessions.
+- Client-local I/O failures are logged and do not intentionally terminate other sessions.
 - Cancellation-aware accept/read/write and shutdown.
 - Structured console lifecycle logs; payload bytes are never logged.
 - Defaults: 127.0.0.1:5000, maximum 100 concurrent clients.
-- CLI arguments: bind IP, port, max concurrent clients.
-- Integration tests authored for binary echo, two clients, 1 MiB fragmented writes, max-client backpressure, disconnect resilience, and shutdown.
+- Positional CLI arguments: bind IP, port, maximum concurrent clients.
+- Environment variables: TCP_ECHO_HOST, TCP_ECHO_PORT, TCP_ECHO_MAX_CLIENTS.
+- Configuration precedence: positional CLI argument > corresponding environment variable > default.
+- Invalid configuration and extra CLI arguments are rejected.
+- Unit tests cover defaults, environment configuration, CLI precedence, and invalid values.
+- Integration tests cover binary echo, two clients, 1 MiB fragmented writes, max-client backpressure, disconnect resilience, and shutdown.
 
 ## Commands
     dotnet restore tcp-echo-server.sln
