@@ -4,6 +4,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpEchoServer", "src\TcpEchoServer\TcpEchoServer.csproj", "{3A6B3D2F-3F3A-4A11-A5D2-0E0F1A8D5C01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpEchoServer.Tests", "tests\\TcpEchoServer.Tests\\TcpEchoServer.Tests.csproj", "{B6E8C3D1-2B2C-4F9D-9C15-4A0E5C1D2F02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,5 +16,9 @@ Global
 		{3A6B3D2F-3F3A-4A11-A5D2-0E0F1A8D5C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A6B3D2F-3F3A-4A11-A5D2-0E0F1A8D5C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A6B3D2F-3F3A-4A11-A5D2-0E0F1A8D5C01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6E8C3D1-2B2C-4F9D-9C15-4A0E5C1D2F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6E8C3D1-2B2C-4F9D-9C15-4A0E5C1D2F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6E8C3D1-2B2C-4F9D-9C15-4A0E5C1D2F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6E8C3D1-2B2C-4F9D-9C15-4A0E5C1D2F02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
