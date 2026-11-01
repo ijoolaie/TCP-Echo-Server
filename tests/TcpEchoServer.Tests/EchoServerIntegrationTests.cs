@@ -123,7 +123,15 @@ public sealed class EchoServerIntegrationTests
             using var first = new TcpClient();
             using var second = new TcpClient();
             await first.ConnectAsync(endpoint.Address, endpoint.Port);
-            await Task.Delay(100);
+
+            // Confirm the first session is accepted and occupies the only slot.
+            var firstStream = first.GetStream();
+            byte[] firstPayload = [0xA5];
+            await firstStream.WriteAsync(firstPayload);
+            var firstEcho = new byte[firstPayload.Length];
+            await firstStream.ReadExactlyAsync(firstEcho).AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+            Assert.Equal(firstPayload, firstEcho);
+
             await second.ConnectAsync(endpoint.Address, endpoint.Port);
 
             var secondStream = second.GetStream();
