@@ -39,6 +39,7 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Author coalesced-write test confirming byte-stream semantics and no framing assumptions.
 - [x] Author empty client-stream (half-close) test and verify subsequent clients are served.
 - [x] Review cancellation flow and client resource ownership; ensure every acquired connection slot is released in the client-session finally block.
+- [x] Author shutdown-under-capacity-pressure test: an active session and a second connected client while the sole client slot is occupied.
 - [ ] Execute all tests and inspect runtime behavior.
 - [ ] Run tests on supported operating systems.
 
