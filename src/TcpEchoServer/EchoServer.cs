@@ -75,11 +75,11 @@ public sealed class EchoServer
                 var id = Interlocked.Increment(ref clientId);
                 var task = HandleClientAsync(client, id, cancellationToken);
                 clients[id] = task;
+
                 _ = task.ContinueWith(
                     completed =>
                     {
                         clients.TryRemove(id, out var _);
-                        _connectionSlots.Release();
                         _ = completed.Exception;
                     },
                     CancellationToken.None,
@@ -90,6 +90,9 @@ public sealed class EchoServer
         finally
         {
             _listener.Stop();
+
+            // No more sessions can be added after the accept loop exits. Completed sessions
+            // may already have been removed; every remaining task is still awaited here.
             try
             {
                 await Task.WhenAll(clients.Values);
@@ -107,13 +110,14 @@ public sealed class EchoServer
     {
         using (client)
         {
-            var remoteEndpoint = client.Client.RemoteEndPoint;
-            _logger.LogInformation("Client {ClientId} connected from {RemoteEndpoint}", clientId, remoteEndpoint);
-            var stream = client.GetStream();
-            var buffer = new byte[81920];
-
             try
             {
+                var remoteEndpoint = client.Client.RemoteEndPoint;
+                _logger.LogInformation("Client {ClientId} connected from {RemoteEndpoint}", clientId, remoteEndpoint);
+
+                var stream = client.GetStream();
+                var buffer = new byte[81920];
+
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var bytesRead = await stream.ReadAsync(buffer, cancellationToken);
@@ -142,6 +146,7 @@ public sealed class EchoServer
             }
             finally
             {
+                _connectionSlots.Release();
                 _logger.LogInformation("Client {ClientId} disconnected", clientId);
             }
         }
