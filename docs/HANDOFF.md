@@ -8,8 +8,9 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Phase 2 (concurrency, bounded sessions, shutdown, and logging) implementation committed.
 - Phase 3 (validated CLI/environment configuration and precedence) implementation committed.
 - Phase 4 edge-case coverage and source-level lifecycle review committed.
+- A shutdown-under-capacity-pressure test now covers an active client plus a second connected client while the only session slot is occupied.
 - .NET 10 solution, xUnit tests, and GitHub Actions workflow committed; CI is configured for Ubuntu, Windows, and macOS, with push, pull-request, and manual-dispatch triggers.
-- The maximum-client integration test now verifies the first client has an active echo session before checking that a second client waits for the only slot.
+- The maximum-client integration test verifies the first client has an active echo session before checking that a second client waits for the only slot.
 - **Verification is pending:** no successful local .NET build or test is claimed. The current execution environment does not have the .NET SDK installed. CI results must be checked before claiming runtime validation.
 
 ## Implemented behavior
@@ -25,7 +26,7 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Configuration precedence: positional CLI argument > corresponding environment variable > default.
 - Invalid configuration and extra CLI arguments are rejected.
 - Unit tests cover defaults, environment configuration, CLI precedence, and invalid values.
-- Integration tests cover binary echo, concurrent clients, 1 MiB fragmented writes, max-client backpressure, disconnect resilience, shutdown, coalesced writes, and empty client streams.
+- Integration tests cover binary echo, concurrent clients, 1 MiB fragmented writes, max-client backpressure, disconnect resilience, shutdown, coalesced writes, empty client streams, and shutdown while client capacity is saturated.
 - Client session cleanup releases the connection slot in a finally block; session setup and I/O are covered by the same exception handling scope.
 
 ## Commands
@@ -38,7 +39,7 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Execute build/tests and fix any failures.
 - Confirm GitHub Actions passes.
 - Run tests on supported operating systems.
-- Source-level security review completed; corrected a malformed test-project path in `tcp-echo-server.sln`.
+- Source-level security review completed; corrected a malformed test-project path in tcp-echo-server.sln.
 - Complete runtime security and operational review after build/test execution.
 - Do not publish a v1.0 tag until verification is green.
 
