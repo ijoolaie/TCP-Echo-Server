@@ -136,6 +136,10 @@ public sealed class EchoServer
             {
                 _logger.LogDebug(exception, "Socket ended for client {ClientId}", clientId);
             }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Unexpected failure in client session {ClientId}", clientId);
+            }
             finally
             {
                 _logger.LogInformation("Client {ClientId} disconnected", clientId);
