@@ -1,8 +1,10 @@
 using System.Net;
+using Microsoft.Extensions.Logging;
 using TcpEchoServer;
 
 var host = args.Length > 0 ? args[0] : "127.0.0.1";
 var port = args.Length > 1 && int.TryParse(args[1], out var parsedPort) ? parsedPort : 5000;
+var maxClients = args.Length > 2 && int.TryParse(args[2], out var parsedMaxClients) ? parsedMaxClients : 100;
 
 if (!IPAddress.TryParse(host, out var address))
 {
@@ -16,6 +18,19 @@ if (port is < IPEndPoint.MinPort or > IPEndPoint.MaxPort)
     return 2;
 }
 
+if (maxClients < 1)
+{
+    Console.Error.WriteLine("Maximum concurrent clients must be at least 1.");
+    return 2;
+}
+
+using var loggerFactory = LoggerFactory.Create(builder => builder.AddSimpleConsole(options =>
+{
+    options.SingleLine = true;
+    options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+}));
+var logger = loggerFactory.CreateLogger<EchoServer>();
+
 using var shutdown = new CancellationTokenSource();
 Console.CancelKeyPress += (_, eventArgs) =>
 {
@@ -23,10 +38,7 @@ Console.CancelKeyPress += (_, eventArgs) =>
     shutdown.Cancel();
 };
 
-var server = new EchoServer(address, port);
-Console.WriteLine($"TCP echo server listening on {address}:{port}");
-Console.WriteLine("Press Ctrl+C to stop.");
-
+var server = new EchoServer(address, port, maxClients, logger);
 try
 {
     await server.RunAsync(shutdown.Token);
@@ -36,5 +48,4 @@ catch (OperationCanceledException) when (shutdown.IsCancellationRequested)
     // Expected during graceful shutdown.
 }
 
-Console.WriteLine("TCP echo server stopped.");
 return 0;
