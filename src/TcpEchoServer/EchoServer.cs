@@ -1,24 +1,36 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
+using Microsoft.Extensions.Logging;
 
 namespace TcpEchoServer;
 
 /// <summary>
-/// A byte-preserving TCP echo server. Each read is echoed as an arbitrary
-/// stream chunk; no message or text encoding boundaries are assumed.
+/// A byte-preserving TCP echo server. Reads are arbitrary stream chunks, not messages.
 /// </summary>
 public sealed class EchoServer
 {
     private readonly TcpListener _listener;
+    private readonly SemaphoreSlim _connectionSlots;
+    private readonly ILogger<EchoServer> _logger;
+    private readonly int _maxConcurrentClients;
 
-    public EchoServer(IPAddress address, int port)
+    public EchoServer(
+        IPAddress address,
+        int port,
+        int maxConcurrentClients = 100,
+        ILogger<EchoServer>? logger = null)
     {
         ArgumentNullException.ThrowIfNull(address);
         if (port is < IPEndPoint.MinPort or > IPEndPoint.MaxPort)
             throw new ArgumentOutOfRangeException(nameof(port));
+        if (maxConcurrentClients < 1)
+            throw new ArgumentOutOfRangeException(nameof(maxConcurrentClients));
 
         _listener = new TcpListener(address, port);
+        _maxConcurrentClients = maxConcurrentClients;
+        _connectionSlots = new SemaphoreSlim(maxConcurrentClients, maxConcurrentClients);
+        _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<EchoServer>.Instance;
     }
 
     public IPEndPoint? LocalEndpoint => _listener.LocalEndpoint as IPEndPoint;
@@ -28,6 +40,9 @@ public sealed class EchoServer
         var clients = new ConcurrentDictionary<int, Task>();
         var clientId = 0;
         _listener.Start();
+        _logger.LogInformation(
+            "TCP echo server started on {Endpoint}; maximum concurrent clients: {MaxClients}",
+            LocalEndpoint, _maxConcurrentClients);
 
         try
         {
@@ -47,11 +62,26 @@ public sealed class EchoServer
                     break;
                 }
 
+                try
+                {
+                    await _connectionSlots.WaitAsync(cancellationToken);
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    client.Dispose();
+                    break;
+                }
+
                 var id = Interlocked.Increment(ref clientId);
-                var task = HandleClientAsync(client, cancellationToken);
+                var task = HandleClientAsync(client, id, cancellationToken);
                 clients[id] = task;
                 _ = task.ContinueWith(
-                    _ => clients.TryRemove(id, out _),
+                    completed =>
+                    {
+                        clients.TryRemove(id, out var _);
+                        _connectionSlots.Release();
+                        _ = completed.Exception;
+                    },
                     CancellationToken.None,
                     TaskContinuationOptions.ExecuteSynchronously,
                     TaskScheduler.Default);
@@ -66,15 +96,19 @@ public sealed class EchoServer
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                // Active client reads are canceled as part of server shutdown.
+                // Active client reads are canceled as part of graceful shutdown.
             }
+
+            _logger.LogInformation("TCP echo server stopped");
         }
     }
 
-    private static async Task HandleClientAsync(TcpClient client, CancellationToken cancellationToken)
+    private async Task HandleClientAsync(TcpClient client, int clientId, CancellationToken cancellationToken)
     {
         using (client)
         {
+            var remoteEndpoint = client.Client.RemoteEndPoint;
+            _logger.LogInformation("Client {ClientId} connected from {RemoteEndpoint}", clientId, remoteEndpoint);
             var stream = client.GetStream();
             var buffer = new byte[81920];
 
@@ -89,13 +123,22 @@ public sealed class EchoServer
                     await stream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
                 }
             }
-            catch (IOException)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                // A client disconnect or I/O failure is local to this session.
+                _logger.LogDebug("Client {ClientId} operation canceled during server shutdown", clientId);
+                throw;
             }
-            catch (SocketException)
+            catch (IOException exception)
             {
-                // A client disconnect or socket failure is local to this session.
+                _logger.LogDebug(exception, "I/O ended for client {ClientId}", clientId);
+            }
+            catch (SocketException exception)
+            {
+                _logger.LogDebug(exception, "Socket ended for client {ClientId}", clientId);
+            }
+            finally
+            {
+                _logger.LogInformation("Client {ClientId} disconnected", clientId);
             }
         }
     }
