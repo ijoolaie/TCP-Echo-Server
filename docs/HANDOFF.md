@@ -7,8 +7,9 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Phase 1 (minimal server) implementation committed.
 - Phase 2 (concurrency, bounded sessions, shutdown, and logging) implementation committed.
 - Phase 3 (validated CLI/environment configuration and precedence) implementation committed.
+- Phase 4 edge-case coverage and source-level lifecycle review committed.
 - .NET 10 solution, xUnit tests, and GitHub Actions workflow committed.
-- **Verification is pending:** no successful local .NET build or test is claimed. The current execution environment does not have the .NET SDK installed. CI must be checked after the latest commits.
+- **Verification is pending:** no successful local .NET build or test is claimed. The current execution environment does not have the .NET SDK installed. CI results must be checked before claiming runtime validation.
 
 ## Implemented behavior
 - Asynchronous TCP accept loop and per-client echo tasks.
@@ -23,7 +24,8 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Configuration precedence: positional CLI argument > corresponding environment variable > default.
 - Invalid configuration and extra CLI arguments are rejected.
 - Unit tests cover defaults, environment configuration, CLI precedence, and invalid values.
-- Integration tests cover binary echo, two clients, 1 MiB fragmented writes, max-client backpressure, disconnect resilience, and shutdown.
+- Integration tests cover binary echo, concurrent clients, 1 MiB fragmented writes, max-client backpressure, disconnect resilience, shutdown, coalesced writes, and empty client streams.
+- Client session cleanup releases the connection slot in a finally block; session setup and I/O are covered by the same exception handling scope.
 
 ## Commands
     dotnet restore tcp-echo-server.sln
@@ -34,8 +36,8 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 ## Remaining before v1.0
 - Execute build/tests and fix any failures.
 - Confirm GitHub Actions passes.
-- Expand edge-case tests if validation identifies gaps.
-- Complete resource-lifecycle/security review.
+- Run tests on supported operating systems.
+- Complete runtime security and operational review.
 - Do not publish a v1.0 tag until verification is green.
 
 ## Safety constraints
