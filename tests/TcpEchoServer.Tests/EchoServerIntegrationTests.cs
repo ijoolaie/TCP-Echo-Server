@@ -62,8 +62,8 @@ public sealed class EchoServerIntegrationTests
             var firstEcho = new byte[firstPayload.Length];
             var secondEcho = new byte[secondPayload.Length];
             await Task.WhenAll(
-                firstStream.ReadExactlyAsync(firstEcho),
-                secondStream.ReadExactlyAsync(secondEcho));
+                firstStream.ReadExactlyAsync(firstEcho).AsTask(),
+                secondStream.ReadExactlyAsync(secondEcho).AsTask());
 
             Assert.Equal(firstPayload, firstEcho);
             Assert.Equal(secondPayload, secondEcho);
