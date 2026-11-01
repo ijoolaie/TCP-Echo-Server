@@ -8,7 +8,8 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Phase 2 (concurrency, bounded sessions, shutdown, and logging) implementation committed.
 - Phase 3 (validated CLI/environment configuration and precedence) implementation committed.
 - Phase 4 edge-case coverage and source-level lifecycle review committed.
-- .NET 10 solution, xUnit tests, and GitHub Actions workflow committed; CI is configured for Ubuntu, Windows, and macOS.
+- .NET 10 solution, xUnit tests, and GitHub Actions workflow committed; CI is configured for Ubuntu, Windows, and macOS, with push, pull-request, and manual-dispatch triggers.
+- The maximum-client integration test now verifies the first client has an active echo session before checking that a second client waits for the only slot.
 - **Verification is pending:** no successful local .NET build or test is claimed. The current execution environment does not have the .NET SDK installed. CI results must be checked before claiming runtime validation.
 
 ## Implemented behavior
