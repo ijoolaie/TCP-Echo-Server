@@ -13,7 +13,7 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Echo arbitrary byte chunks without decoding or framing.
 - [x] Handle EOF and dispose client resources.
 - [x] Add loopback tests for binary echo and concurrent clients.
-- [ ] Execute restore, build, and tests with .NET 10; resolve any failures.
+- [x] Execute restore, build, and tests with .NET 10 on GitHub Actions (17 tests passed per OS).
 
 ## Phase 2 — Concurrency and lifecycle
 - [x] Support multiple simultaneous clients.
@@ -22,7 +22,7 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Enforce maximum concurrent clients with a semaphore.
 - [x] Add structured lifecycle logs without payload contents.
 - [x] Add integration coverage for two clients, max-client backpressure, large fragmented writes, disconnect resilience, and shutdown.
-- [ ] Execute tests and verify lifecycle behavior in CI.
+- [x] Execute tests and verify lifecycle behavior in CI (17/17 passed on Ubuntu, Windows, and macOS).
 
 ## Phase 3 — Configuration and observability
 - [x] Configure bind IP, port, and maximum concurrent clients through command-line arguments.
@@ -31,7 +31,7 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Reject malformed or out-of-range configuration instead of silently falling back.
 - [x] Structured console logging for server/client lifecycle.
 - [x] Safe loopback default.
-- [ ] Execute configuration tests and verify startup behavior in CI.
+- [x] Execute configuration tests and verify startup behavior in CI (17/17 passed on Ubuntu, Windows, and macOS).
 
 ## Phase 4 — Quality and protocol correctness
 - [x] Author binary payload preservation test.
@@ -40,14 +40,14 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Author empty client-stream (half-close) test and verify subsequent clients are served.
 - [x] Review cancellation flow and client resource ownership; ensure every acquired connection slot is released in the client-session finally block.
 - [x] Author shutdown-under-capacity-pressure test: an active session and a second connected client while the sole client slot is occupied.
-- [ ] Execute all tests and inspect runtime behavior.
-- [ ] Run tests on supported operating systems.
+- [x] Execute all tests and inspect runtime behavior in CI.
+- [x] Run tests on supported operating systems (Ubuntu, Windows, macOS).
 
 ## Phase 5 — CI and release
 - [x] Add GitHub Actions workflow for .NET 10 restore, build, and test.
 - [x] Configure CI matrix for Ubuntu, Windows, and macOS.
 - [x] Document build, run, and test commands.
-- [ ] Confirm CI passes on GitHub.
+- [x] Confirm CI passes on GitHub (workflow run #47, commit 5597190).
 - [x] Complete source-level security review; correct the test project path separators in the solution file.
 - [ ] Complete runtime security and operational review after build/test execution.
 - [ ] Publish release notes and tag v1.0.0 only after all acceptance criteria pass.
