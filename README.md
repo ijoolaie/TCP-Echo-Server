@@ -2,7 +2,7 @@
 
 An asynchronous TCP echo server built with **C# and .NET 10**. It accepts concurrent clients and writes each client's received bytes back to that same client without changing their contents.
 
-> **Status:** Implementation, cross-platform build, and automated test verification are complete. The latest GitHub Actions run passed on Ubuntu, Windows, and macOS (17 tests per OS). No v1.0.0 release or tag has been created.
+> **Status:** Implementation, cross-platform build, and automated test verification are complete. The latest GitHub Actions run (#52) passed on Ubuntu, Windows, and macOS (17 tests per OS). Release notes for v1.0.0 are prepared; the GitHub release and tag are not yet published.
 
 ## Features
 - Asynchronous TCP accept and read/write operations.
@@ -49,6 +49,7 @@ The loopback default is intentional; do not expose the server publicly without e
 - src/TcpEchoServer/ — server implementation
 - tests/TcpEchoServer.Tests/ — xUnit unit and loopback integration tests
 - docs/HANDOFF.md and docs/ROADMAP.md
+- docs/RELEASE_NOTES_v1.0.0.md — prepared release notes
 - .github/workflows/dotnet.yml — CI pipeline
 - tcp-echo-server.sln
 
@@ -58,3 +59,4 @@ Version 1.0 focuses on reliable concurrent echo, lifecycle management, connectio
 ## Project documents
 - [Handoff and engineering decisions](docs/HANDOFF.md)
 - [Roadmap](docs/ROADMAP.md)
+- [v1.0.0 release notes](docs/RELEASE_NOTES_v1.0.0.md)
