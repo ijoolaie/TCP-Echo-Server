@@ -2,7 +2,7 @@
 
 An asynchronous TCP echo server built with **C# and .NET 10**. It accepts concurrent clients and writes each client's received bytes back to that same client without changing their contents.
 
-> **Status:** Phase 1–4 implementation and automated test coverage are committed. Build/test execution and CI confirmation remain pending.
+> **Status:** Implementation, cross-platform build, and automated test verification are complete. The latest GitHub Actions run passed on Ubuntu, Windows, and macOS (17 tests per OS). No v1.0.0 release or tag has been created.
 
 ## Features
 - Asynchronous TCP accept and read/write operations.
