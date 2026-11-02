@@ -94,14 +94,23 @@ public sealed class EchoServerIntegrationTests
                 .Select(index => (byte)(index % 251))
                 .ToArray();
 
+            var echoed = new byte[payload.Length];
+
+            // Read concurrently with writes so the server's echo response cannot fill
+            // the client's receive window while this test is still sending the payload.
+            var echoTask = stream.ReadExactlyAsync(echoed)
+                .AsTask()
+                .WaitAsync(TimeSpan.FromSeconds(5));
+
             for (var offset = 0; offset < payload.Length; offset += 4093)
             {
                 var count = Math.Min(4093, payload.Length - offset);
-                await stream.WriteAsync(payload.AsMemory(offset, count));
+                await stream.WriteAsync(payload.AsMemory(offset, count))
+                    .AsTask()
+                    .WaitAsync(TimeSpan.FromSeconds(5));
             }
 
-            var echoed = new byte[payload.Length];
-            await stream.ReadExactlyAsync(echoed);
+            await echoTask;
             Assert.Equal(payload, echoed);
         }
         finally
