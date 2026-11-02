@@ -47,11 +47,11 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Add GitHub Actions workflow for .NET 10 restore, build, and test.
 - [x] Configure CI matrix for Ubuntu, Windows, and macOS.
 - [x] Document build, run, and test commands.
-- [x] Confirm final CI passes on GitHub (workflow run #52, commit 9544d7b; 17/17 tests per OS; 0 warnings and 0 errors).
+- [x] Confirm final CI passes on GitHub (workflow run #56, commit 8ebbfca; 17/17 tests per OS; 0 warnings and 0 errors).
 - [x] Complete source-level security and operational review: loopback default, validated configuration, bounded sessions, payload-free logging, resource cleanup, and cancellation-aware shutdown.
 - [x] Confirm repository visibility: Public.
 - [x] Prepare v1.0.0 release notes.
-- [ ] Publish GitHub Release and create the v1.0.0 tag.
+- [x] Publish GitHub Release and create the v1.0.0 tag: [v1.0.0](https://github.com/ijoolaie/TCP-Echo-Server/releases/tag/v1.0.0).
 
 ## Phase 6 — Optional future work
 Consider TLS, container packaging, metrics, health endpoints, or protocol extensions only after v1.0 and with explicit scope approval.
