@@ -11,7 +11,7 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - A shutdown-under-capacity-pressure test now covers an active client plus a second connected client while the only session slot is occupied.
 - .NET 10 solution, xUnit tests, and GitHub Actions workflow committed; CI is configured for Ubuntu, Windows, and macOS, with push, pull-request, and manual-dispatch triggers.
 - The maximum-client integration test verifies the first client has an active echo session before checking that a second client waits for the only slot.
-- **Verification is pending:** no successful local .NET build or test is claimed. The current execution environment does not have the .NET SDK installed. CI results must be checked before claiming runtime validation.
+- **Runtime verification passed:** GitHub Actions workflow run #47 (`41387368236`) succeeded on Ubuntu, Windows, and macOS for commit `55971901bb4dad5c1208da63f0a9835c638c0dec`. Each OS completed restore, build, and all 17 tests successfully. Build reported 0 warnings and 0 errors on each OS. Local verification remains unavailable because this environment has no .NET SDK.
 
 ## Implemented behavior
 - Asynchronous TCP accept loop and per-client echo tasks.
@@ -36,12 +36,12 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
     dotnet run --project src/TcpEchoServer -- 127.0.0.1 5000 100
 
 ## Remaining before v1.0
-- Execute build/tests and fix any failures.
-- Confirm GitHub Actions passes.
-- Run tests on supported operating systems.
+- [x] Execute build/tests and resolve observed failures; latest CI run passed.
+- [x] Confirm GitHub Actions passes (run #47).
+- [x] Run tests on supported operating systems (Ubuntu, Windows, macOS).
 - Source-level security review completed; corrected a malformed test-project path in tcp-echo-server.sln.
-- Complete runtime security and operational review after build/test execution.
-- Do not publish a v1.0 tag until verification is green.
+- Runtime build/test verification is green. Complete final runtime security and operational review before release.
+- Publish release notes and create the v1.0.0 tag only after the final operational review.
 
 ## Safety constraints
 - Keep loopback as the default bind address.
