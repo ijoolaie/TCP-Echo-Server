@@ -8,10 +8,9 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Phase 2 (concurrency, bounded sessions, shutdown, and logging) implementation committed.
 - Phase 3 (validated CLI/environment configuration and precedence) implementation committed.
 - Phase 4 edge-case coverage and source-level lifecycle review committed.
-- A shutdown-under-capacity-pressure test now covers an active client plus a second connected client while the only session slot is occupied.
-- .NET 10 solution, xUnit tests, and GitHub Actions workflow committed; CI is configured for Ubuntu, Windows, and macOS, with push, pull-request, and manual-dispatch triggers.
 - The maximum-client integration test verifies the first client has an active echo session before checking that a second client waits for the only slot.
-- **Runtime verification passed:** GitHub Actions workflow run #47 (`41387368236`) succeeded on Ubuntu, Windows, and macOS for commit `55971901bb4dad5c1208da63f0a9835c638c0dec`. Each OS completed restore, build, and all 17 tests successfully. Build reported 0 warnings and 0 errors on each OS. Local verification remains unavailable because this environment has no .NET SDK.
+- **Latest runtime verification passed:** GitHub Actions run #49 (`41387546803`) succeeded on Ubuntu, Windows, and macOS for commit `8903c91142542b8974f8f9fd599289d6866c108c`. Each OS completed restore, build, and all 17 tests successfully (51 successful test executions total). Build reported 0 warnings and 0 errors on each OS. Local verification remains unavailable because this environment has no .NET SDK.
+- Final source-level security and operational review completed. No release or tag has been created.
 
 ## Implemented behavior
 - Asynchronous TCP accept loop and per-client echo tasks.
@@ -29,22 +28,39 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Integration tests cover binary echo, concurrent clients, 1 MiB fragmented writes, max-client backpressure, disconnect resilience, shutdown, coalesced writes, empty client streams, and shutdown while client capacity is saturated.
 - Client session cleanup releases the connection slot in a finally block; session setup and I/O are covered by the same exception handling scope.
 
+## Verification record
+- Workflow: [GitHub Actions run #49](https://github.com/ijoolaie/TCP-Echo-Server/actions/runs/41387546803)
+- Commit: `8903c91142542b8974f8f9fd599289d6866c108c`
+- Matrix: Ubuntu, Windows, macOS — all green.
+- Per OS: restore passed, build passed with 0 warnings / 0 errors, 17/17 tests passed.
+- Local .NET execution was not possible in the authoring environment because the .NET SDK is not installed.
+
+## Final security and operational review
+- [x] Default bind address is loopback (127.0.0.1); non-loopback binding requires explicit configuration.
+- [x] Host, port, and client limit are validated; invalid values fail startup.
+- [x] Active client sessions are bounded by the configured semaphore.
+- [x] TCP data is echoed as bytes without decoding or framing assumptions.
+- [x] Payload contents are not written to logs.
+- [x] Client sockets are disposed and acquired concurrency slots are released in a finally block.
+- [x] Shutdown cancels accept/read/write operations, stops the listener, and awaits tracked client tasks.
+- [x] Cross-platform build and all tests passed in CI.
+- [ ] Decide whether the GitHub repository should remain public or be changed to private. The repository metadata currently reports visibility as public; no visibility change has been made.
+
 ## Commands
     dotnet restore tcp-echo-server.sln
     dotnet build tcp-echo-server.sln --configuration Release
     dotnet test tcp-echo-server.sln --configuration Release
     dotnet run --project src/TcpEchoServer -- 127.0.0.1 5000 100
 
-## Remaining before v1.0
-- [x] Execute build/tests and resolve observed failures; latest CI run passed.
-- [x] Confirm GitHub Actions passes (run #47).
-- [x] Run tests on supported operating systems (Ubuntu, Windows, macOS).
-- Source-level security review completed; corrected a malformed test-project path in tcp-echo-server.sln.
-- Runtime build/test verification is green. Complete final runtime security and operational review before release.
-- Publish release notes and create the v1.0.0 tag only after the final operational review.
+## Release gate
+- [x] Execute build/tests and resolve observed failures.
+- [x] Confirm GitHub Actions passes on all supported operating systems.
+- [x] Complete source-level security and operational review.
+- [ ] Confirm desired repository visibility.
+- [ ] Publish release notes and create the v1.0.0 tag only after the remaining release decision is approved.
 
 ## Safety constraints
 - Keep loopback as the default bind address.
-- Do not deploy or expose publicly without explicit approval.
+- Do not deploy or expose the server publicly without explicit approval.
 - Never log client payloads.
 - Keep unrelated repositories untouched.
