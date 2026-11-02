@@ -31,7 +31,7 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Reject malformed or out-of-range configuration instead of silently falling back.
 - [x] Structured console logging for server/client lifecycle.
 - [x] Safe loopback default.
-- [x] Execute configuration tests and verify startup behavior in CI (17/17 passed on Ubuntu, Windows, and macOS).
+- [x] Execute configuration tests and verify startup behavior in CI.
 
 ## Phase 4 — Quality and protocol correctness
 - [x] Author binary payload preservation test.
@@ -39,7 +39,7 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Author coalesced-write test confirming byte-stream semantics and no framing assumptions.
 - [x] Author empty client-stream (half-close) test and verify subsequent clients are served.
 - [x] Review cancellation flow and client resource ownership; ensure every acquired connection slot is released in the client-session finally block.
-- [x] Author shutdown-under-capacity-pressure test: an active session and a second connected client while the sole client slot is occupied.
+- [x] Author shutdown-under-capacity-pressure test.
 - [x] Execute all tests and inspect runtime behavior in CI.
 - [x] Run tests on supported operating systems (Ubuntu, Windows, macOS).
 
@@ -47,10 +47,11 @@ A checked item means implementation or test coverage is committed. Passing build
 - [x] Add GitHub Actions workflow for .NET 10 restore, build, and test.
 - [x] Configure CI matrix for Ubuntu, Windows, and macOS.
 - [x] Document build, run, and test commands.
-- [x] Confirm latest CI passes on GitHub (workflow run #49, commit 8903c91; 17/17 tests per OS).
+- [x] Confirm final CI passes on GitHub (workflow run #52, commit 9544d7b; 17/17 tests per OS; 0 warnings and 0 errors).
 - [x] Complete source-level security and operational review: loopback default, validated configuration, bounded sessions, payload-free logging, resource cleanup, and cancellation-aware shutdown.
-- [ ] Confirm desired GitHub repository visibility (currently public).
-- [ ] Publish release notes and tag v1.0.0 after the visibility/release decision is confirmed.
+- [x] Confirm repository visibility: Public.
+- [x] Prepare v1.0.0 release notes.
+- [ ] Publish GitHub Release and create the v1.0.0 tag.
 
 ## Phase 6 — Optional future work
 Consider TLS, container packaging, metrics, health endpoints, or protocol extensions only after v1.0 and with explicit scope approval.
