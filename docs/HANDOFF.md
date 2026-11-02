@@ -4,12 +4,12 @@
 Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting .NET 10. It accepts concurrent TCP clients and echoes each client's bytes back unchanged.
 
 ## Current status
-- Phases 1–4 are implemented and committed: server, concurrency/lifecycle, validated configuration, and edge-case coverage.
+- Phases 1–5 are implemented, committed, and released as [v1.0.0](https://github.com/ijoolaie/TCP-Echo-Server/releases/tag/v1.0.0).
 - Final source-level security and operational review is complete.
-- Latest CI run #52 passed on Ubuntu, macOS, and Windows for commit `9544d7bf30d6d92ff043e62ac853262c50e9e93b`. Each platform completed restore, build, and all 17 tests successfully (51 successful test executions total), with 0 build warnings and 0 errors.
-- Release notes for v1.0.0 are prepared in [docs/RELEASE_NOTES_v1.0.0.md](RELEASE_NOTES_v1.0.0.md).
+- Final CI run #56 passed on Ubuntu, macOS, and Windows for commit `8ebbfcae63606ba1a1c66f5be350714cde71f6ff`. Each platform completed restore, build, and all 17 tests successfully (51 successful test executions total), with 0 build warnings and 0 errors.
+- Published release notes are maintained in [docs/RELEASE_NOTES_v1.0.0.md](RELEASE_NOTES_v1.0.0.md).
 - Repository visibility remains **Public**, as requested.
-- The GitHub Release and `v1.0.0` tag have not yet been published. No deployment has been performed.
+- No deployment has been performed; the server remains local-first and binds to loopback by default.
 - Local .NET execution was unavailable in the authoring environment because the .NET SDK is not installed; runtime validation was performed by GitHub Actions.
 
 ## Implemented behavior
@@ -29,8 +29,8 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - Client session cleanup releases the connection slot in a finally block; session setup and I/O are covered by the same exception handling scope.
 
 ## Latest verification record
-- Workflow: [GitHub Actions run #52](https://github.com/ijoolaie/TCP-Echo-Server/actions/runs/41387945426)
-- Commit: `9544d7bf30d6d92ff043e62ac853262c50e9e93b`
+- Workflow: [GitHub Actions run #56](https://github.com/ijoolaie/TCP-Echo-Server/actions/runs/41394303108)
+- Commit: `8ebbfcae63606ba1a1c66f5be350714cde71f6ff`
 - Matrix: Ubuntu, Windows, macOS — all green.
 - Per OS: restore passed, build passed with 0 warnings / 0 errors, 17/17 tests passed.
 
@@ -43,7 +43,7 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - [x] Client sockets are disposed and acquired concurrency slots are released in a finally block.
 - [x] Shutdown cancels accept/read/write operations, stops the listener, and awaits tracked client tasks.
 - [x] Cross-platform build and all tests passed in CI.
-- [x] Repository visibility decision confirmed: keep Public.
+- [x] Repository visibility decision confirmed: Public.
 
 ## Commands
     dotnet restore tcp-echo-server.sln
@@ -57,7 +57,8 @@ Build ijoolaie/tcp-echo-server: an asynchronous TCP echo server in C# targeting 
 - [x] Complete source-level security and operational review.
 - [x] Confirm repository visibility: Public.
 - [x] Prepare v1.0.0 release notes.
-- [ ] Publish GitHub Release and create the v1.0.0 tag.
+- [x] Publish GitHub Release and create the v1.0.0 tag.
+- [x] Verify published release metadata and tag URL.
 
 ## Safety constraints
 - Keep loopback as the default bind address.
