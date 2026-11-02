@@ -1,6 +1,6 @@
 # TCP Echo Server v1.0.0
 
-**Release status:** Release candidate notes prepared. The GitHub release and `v1.0.0` tag have not yet been published.
+<escape>**Release status:** Published on GitHub as [v1.0.0](https://github.com/ijoolaie/TCP-Echo-Server/releases/tag/v1.0.0).</escape>
 
 ## Overview
 
@@ -31,10 +31,10 @@ Environment variables: `TCP_ECHO_HOST`, `TCP_ECHO_PORT`, and `TCP_ECHO_MAX_CLIEN
 
 ## Verification
 
-The latest pre-release CI run (#52) passed on Ubuntu, macOS, and Windows. Each platform completed restore, build, and all 17 tests successfully (51 successful test executions total), with zero build warnings and zero errors.
+The final pre-release CI run (#56) passed on Ubuntu, macOS, and Windows. Each platform completed restore, build, and all 17 tests successfully (51 successful test executions total), with zero build warnings and zero build errors.
 
-- [GitHub Actions run #52](https://github.com/ijoolaie/TCP-Echo-Server/actions/runs/41387945426)
-- Verified commit: `9544d7bf30d6d92ff043e62ac853262c50e9e93b`
+- [GitHub Actions run #56](https://github.com/ijoolaie/TCP-Echo-Server/actions/runs/41394303108)
+- Verified commit: `8ebbfcae63606ba1a1c66f5be350714cde71f6ff`
 
 ## Not included
 
